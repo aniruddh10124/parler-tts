@@ -1109,9 +1109,12 @@ def main():
                         unwrapped_model = accelerator.unwrap_model(model)
                         
                         # If using LoRA, save LoRA weights separately
-                        if model_args.use_lora and hasattr(unwrapped_model, 'save_lora_weights'):
+                        if model_args.use_lora and hasattr(unwrapped_model, 'save_lora_weights') and model_args.lora_weights_path is None:
                             unwrapped_model.save_lora_weights(os.path.join(training_args.output_dir, "final_lora_weights.pt"))
                             logger.info(f"Final LoRA weights saved to {os.path.join(training_args.output_dir, 'final_lora_weights.pt')}")
+                        elif model_args.use_lora and hasattr(unwrapped_model, 'save_lora_weights') and model_args.lora_weights_path is not None:
+                            unwrapped_model.save_lora_weights(model_args.lora_weights_path)
+                            logger.info(f"Final LoRA weights saved to {model_args.lora_weights_path}")
                         
                         unwrapped_model.save_pretrained(training_args.output_dir)
 
